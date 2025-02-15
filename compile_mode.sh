@@ -65,13 +65,10 @@ if [ $? -eq 0 ]; then
 	$USER_HOME/mkbootimg/mkbootimg.py --kernel outKernel/kernel --ramdisk outKernel/ramdisk $FORMAT_MKBOOTING -o boot_${CURRENT_FOLDER}_${TIME}.img
 	echo "========================"
 	echo "=                      ="
-	echo "=   Exec the command   ="
+	echo "= Compile Successfully ="
 	echo "=                      ="
 	echo "========================"
-	#echo "mkbootimg/mkbootimg.py $FORMAT_MKBOOTIMG -o /home/jackaltman/Kernel_Compile/Compiled_Kernel/boot_${CURRENT_FOLDER}_${TIME}.img"
-	echo "========================"
-        echo "= Compile Successfully ="
-        echo "========================"
+	echo "$(ls boot_${CURRENT_FOLDER}_${TIME}.img)"
 else
         echo "Compile Failed!Please check error.log."
 fi
