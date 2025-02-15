@@ -1,5 +1,6 @@
 #!/bin/bash
 if [ -z "$1" ]; then
+	echo "Currently, no selection has been made, defaulting to Mode 1."
 	MODE=1
 else
 	MODE=$1
