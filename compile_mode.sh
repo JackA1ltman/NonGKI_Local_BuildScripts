@@ -58,7 +58,6 @@ IMAGE_MKBOOTIMG=Image.gz-dtb
 if [ $? -eq 0 ]; then
         if [ -f "outKernel" ]; then
         	mkdir outKernel
-        	echo "Folder exist!"
         fi
         rm -f outKernel/*
         $USER_HOME/mkbootimg/unpack_bootimg.py --boot_img $USER_HOME/KernelSourceIMGs/boot_$CURRENT_FOLDER.img --out outKernel
