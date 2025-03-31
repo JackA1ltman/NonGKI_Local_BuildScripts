@@ -11,59 +11,37 @@ IMAGE_DIR="$(pwd)/out/arch/arm64/boot"
 TIME=$(date +"%Y%m%d%H%M%S")
 CURRENT_FOLDER=$(basename "$(pwd)")
 USER_HOME=/home/jackaltman/Kernel_Build
-DEVICE_NAME="OP9P"
 
 # Compiler Var
-CLANG_SELECT=clang_los_12
-PATH=$USER_HOME/Clang/$CLANG_SELECT/bin:$PATH
-#GCC_64=CROSS_COMPILE=$USER_HOME/Gcc/gcc-64/bin/aarch64-linux-android-
-#GCC_32=CROSS_COMPILE_ARM32=$USER_HOME/Gcc/gcc-32/bin/arm-linux-androideabi-
-GCC_64=CROSS_COMPILE=aarch64-linux-gnu-
-GCC_32=CROSS_COMPILE_ARM32=arm-none-eabi-
+CLANG_SELECT=clang-r428724
+PATH=$USER_HOME/Old_toolchain/clang/host/linux-x86/$CLANG_SELECT/bin:$PATH
+GCC_64=CROSS_COMPILE=$USER_HOME/Old_toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+GCC_32=CROSS_COMPILE_ARM32=$USER_HOME/Old_toolchain/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
+#GCC_64=CROSS_COMPILE=aarch64-linux-gnu-
+#GCC_32=CROSS_COMPILE_ARM32=arm-none-eabi-
 CLANG_OTHER=CLANG_TRIPLE=aarch64-linux-gnu-
-COMPILER_OPTION=LD=ld.lld
+COMPILER_OPTION='DTC_EXT=dtc SUBARCH=arm64 LLVM=1 LLVM_IAS=1 AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf OBJSIZE=llvm-size STRIP=llvm-strip HOSTCC=clang HOSTCXX=clang++ LLVM_AR=llvm-ar LLVM_DIS=llvm-dis CONFIG_NO_ERROR_ON_MISMATCH=y'
 COMPILER_ARCH=ARCH=arm64
 COMPILER_OUT=O=out
-COMPILER_DEFCONFIG=op8_defconfig
+COMPILER_DEFCONFIG=dipper_user_defconfig
 
 build(){
 make mrproper && rm -f error.log
-make $COMPILER_OUT $COMPILER_ARCH $COMPILER_DEFCONFIG
-make -j$(nproc --all) CC="ccache clang" $COMPILER_OUT $COMPILER_ARCH $COMPILER_OPTION $CLANG_OTHER $GCC_64 $GCC_32 2>&1|tee error.log
+make $COMPILER_OUT $COMPILER_ARCH  $COMPILER_OPTION $GCC_64 $GCC_32 $COMPILER_DEFCONFIG
+make -j$(nproc --all) $COMPILER_OUT $COMPILER_ARCH $COMPILER_OPTION $GCC_64 $GCC_32 2>&1|tee error.log
 }
 
 anykernel3(){
 # AnyKernel3 Var
-AK3_LOCATION="$(pwd)/Anykernel3"
-GENERATE_DTB=1
+AK3_LOCATION="$(pwd)/AnyKernel3"
 
 mkdir -p tmp
-if [ -f "$IMAGE_DIR/Image.gz-dtb" ]; then
-		echo "Found Image.gz-dtb!"
-	cp -fp $IMAGE_DIR/Image.gz-dtb tmp
-elif [ -f "$IMAGE_DIR/Image.gz" ]; then
-	echo "Found Image.gz!"
-	cp -fp $IMAGE_DIR/Image.gz tmp
-elif [ -f "$IMAGE_DIR/Image" ]; then
-	echo "Found Image!"
-	cp -fp $IMAGE_DIR/Image tmp
-fi
-
-if [ -f "$IMAGE_DIR/dtbo.img" ]; then
-	echo "Found dtbo.img!"
-	cp -fp $IMAGE_DIR/dtbo.img tmp
-else
-	echo "Not found dtbo.img!"
-fi
-
+cp -fp $IMAGE_DIR/Image.gz-dtb tmp
+#cp -fp $IMAGE_DIR/dtbo.img tmp
 if [ -f "$IMAGE_DIR/dtb" ]; then
 	echo "Found DTB!"
 	cp -fp $IMAGE_DIR/dtb tmp
 else
-	if [ $GENERATE_DTB == 1 ]; then
-		cat $IMAGE_DIR/dts/vendor/qcom/*.dtb > tmp/DTB
-		echo "Generated DTB!"
-	fi
 	echo "Doesn't found DTB! u device maybe needn't the file."
 fi
 cp -rp $AK3_LOCATION/* tmp
@@ -71,7 +49,7 @@ cd tmp
 7za a -mx9 tmp.zip *
 cd ..
 rm *.zip
-cp -fp tmp/tmp.zip $DEVICE_NAME-$TIME.zip
+cp -fp tmp/tmp.zip Xiaomi8-$TIME.zip
 rm -rf tmp
 }
 
@@ -126,7 +104,6 @@ elif [ $MODE == 3 ]; then
 	echo "=                    ="
 	echo "======================"
 	echo "  Please waiting 2s.  "
-	sleep 2s
 	build
 elif [ $MODE == 4 ]; then
 	echo "======================"
@@ -134,18 +111,9 @@ elif [ $MODE == 4 ]; then
 	echo "=     Anykernel3     ="
 	echo "=                    ="
 	echo "======================"
-	echo "  Please waiting 2s.  "
-	sleep 2s
+	echo "  Please waiting 5s.  "
+	sleep 5s
 	anykernel3
-elif [ $MODE == 5 ]; then
-	echo "======================"
-	echo "=                    ="
-	echo "=     MKBOOT IMG     ="
-	echo "=                    ="
-	echo "======================"
-	echo "  Please waiting 2s.  "
-	sleep 2s
-	mkbootimg
 else
 	echo "======================"
 	echo "=                    ="
