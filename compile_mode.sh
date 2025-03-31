@@ -11,7 +11,7 @@ IMAGE_DIR="$(pwd)/out/arch/arm64/boot"
 TIME=$(date +"%Y%m%d%H%M%S")
 CURRENT_FOLDER=$(basename "$(pwd)")
 USER_HOME=/home/jackaltman/Kernel_Build
-DEVICE_NAME="OP9P"
+DEVICE_NAME="Anykernel3"
 
 # Compiler Var
 CLANG_SELECT=clang_los_12
@@ -35,7 +35,7 @@ make -j$(nproc --all) CC="ccache clang" $COMPILER_OUT $COMPILER_ARCH $COMPILER_O
 anykernel3(){
 # AnyKernel3 Var
 AK3_LOCATION="$(pwd)/Anykernel3"
-GENERATE_DTB=1
+GENERATE_DTB=0
 
 mkdir -p tmp
 if [ -f "$IMAGE_DIR/Image.gz-dtb" ]; then
