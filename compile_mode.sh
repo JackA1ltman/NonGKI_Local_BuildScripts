@@ -24,7 +24,7 @@ CLANG_OTHER=CLANG_TRIPLE=aarch64-linux-gnu-
 COMPILER_OPTION=LD=ld.lld
 COMPILER_ARCH=ARCH=arm64
 COMPILER_OUT=O=out
-COMPILER_DEFCONFIG=op8_defconfig
+COMPILER_DEFCONFIG=mi_defconfig
 
 build(){
 make mrproper && rm -f error.log
