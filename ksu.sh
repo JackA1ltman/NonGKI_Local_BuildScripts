@@ -12,20 +12,20 @@ KERNEL=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $1}')
 PATCHLEVEL=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $2}')
 
 # KernelSU / SuSFS
-KERNELSU_AUTHOR="KernelSU-Next"
-KERNELSU_SETUP="KernelSU-Next"
-KERNELSU_BRANCH="next-susfs-dev"
-
 SUSFS_BRANCH="kernel-$KERNEL.$PATCHLEVEL"
 
+KERNELSU_AUTHOR="rsuntk"
+KERNELSU_SETUP="KernelSU"
+KERNELSU_BRANCH="next-susfs-dev"
+
 # KernelSU Manual Hook
-HOOK_MODE="all" # all -> kernel+ksu , ksu -> ksu , kernel -> kernel
+HOOK_MODE="none" # all -> kernel+ksu , ksu -> ksu , kernel -> kernel
 
 if [ "$HOOK_MODE" == "all" ]; then
 	bash normal_patches.sh
 	bash backport_patches.sh
 
-	if [ $KERNEL -lt 5 ] && [ $PATCHLEVEL -lt 14 ]; then
+	if [ "$KERNEL" -lt 5 ] && [ "$PATCHLEVEL" -lt 14 ]; then
 		bash extra_patches.sh
 	fi
 elif [ "$HOOK_MODE" == "ksu" ]; then
