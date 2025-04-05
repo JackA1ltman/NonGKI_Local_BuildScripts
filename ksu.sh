@@ -45,6 +45,7 @@ curl -LSs "https://raw.githubusercontent.com/$KERNELSU_AUTHOR/$KERNELSU_SETUP/re
 }
 
 kernelsu_change(){
+rm -rf KernelSU && rm -rf KernelSU-Next
 git clone https://github.com/$KERNELSU_AUTHOR/$KERNELSU_SETUP.git -b $KERNELSU_BRANCH
 }
 
