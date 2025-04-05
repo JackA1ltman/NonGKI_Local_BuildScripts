@@ -6,15 +6,46 @@ else
 	MODE=$1
 fi
 
+# Kernel Version
 KERNEL_VERSION=$(head -n 3 device_kernel/Makefile | grep -E 'VERSION|PATCHLEVEL' | awk '{print $3}' | paste -sd '.')
 KERNEL=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $1}')
 PATCHLEVEL=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $2}')
+
+# KernelSU / SuSFS
+KERNELSU_AUTHOR="KernelSU-Next"
 KERNELSU_SETUP="KernelSU-Next"
 KERNELSU_BRANCH="next-susfs-dev"
+
 SUSFS_BRANCH="kernel-$KERNEL.$PATCHLEVEL"
 
+# KernelSU Manual Hook
+HOOK_MODE="all" # all -> kernel+ksu , ksu -> ksu , kernel -> kernel
+
+if [ "$HOOK_MODE" == "all" ]; then
+	bash normal_patches.sh
+	bash backport_patches.sh
+
+	if [ $KERNEL -lt 5 ] && [ $PATCHLEVEL -lt 14 ]; then
+		bash extra_patches.sh
+	fi
+elif [ "$HOOK_MODE" == "ksu" ]; then
+	bash backport_patches.sh
+elif [ "$HOOK_MODE" == "kernel" ]; then
+	bash normal_patches.sh
+
+	if [ $KERNEL -lt 5 ] && [ $PATCHLEVEL -lt 14 ]; then
+		bash extra_patches.sh
+	fi
+else
+	echo "Doesn't exec any scripts."
+fi
+
 kernelsu(){
-curl -LSs "https://raw.githubusercontent.com/$KERNELSU_SETUP/$KERNELSU_SETUP/refs/heads/next/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
+curl -LSs "https://raw.githubusercontent.com/$KERNELSU_AUTHOR/$KERNELSU_SETUP/refs/heads/next/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
+}
+
+kernelsu_change(){
+git clone https://github.com/$KERNELSU_AUTHOR/$KERNELSU_SETUP.git -b $KERNELSU_BRANCH
 }
 
 susfs(){
@@ -53,4 +84,13 @@ elif [ $MODE == 3 ]; then
 	sleep 2s
 	kernelsu
 	susfs
+elif [ $MODE == 4 ]; then
+	echo "======================"
+	echo "=                    ="
+	echo "=  Change KernelSU   ="
+	echo "=                    ="
+	echo "======================"
+	echo "  Please waiting 2s.  "
+	sleep 2s
+	kernelsu_change
 fi
