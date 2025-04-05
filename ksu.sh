@@ -7,7 +7,7 @@ else
 fi
 
 # Kernel Version
-KERNEL_VERSION=$(head -n 3 device_kernel/Makefile | grep -E 'VERSION|PATCHLEVEL' | awk '{print $3}' | paste -sd '.')
+KERNEL_VERSION=$(head -n 3 Makefile | grep -E 'VERSION|PATCHLEVEL' | awk '{print $3}' | paste -sd '.')
 KERNEL=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $1}')
 PATCHLEVEL=$(echo "$KERNEL_VERSION" | awk -F '.' '{print $2}')
 
