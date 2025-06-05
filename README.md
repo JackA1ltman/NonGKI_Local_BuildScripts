@@ -1,2 +1,2 @@
 # NonGKI_Local_BuildScripts
-NonGKI_Local_BuildScripts
+皆为自用本地编译用脚本，不提供任何技术支持
